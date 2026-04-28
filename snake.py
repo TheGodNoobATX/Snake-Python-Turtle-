@@ -8,7 +8,7 @@ def playing_area():
     pen = Turtle()
     pen.ht()
     pen.speed(0)
-    pen.color('light blue')
+    pen.color("#004400")
     pen.begin_fill()
     pen.goto(-240,240)
     pen.goto(240,240)
@@ -20,31 +20,58 @@ def playing_area():
 class Head(Turtle):
   def __init__(self, screen, body):
     super().__init__()
-    pass
+    self.screen = screen
+    self.body = body
+    self.ht()
+    self.speed(0)
+    self.color("#00FF00")
+    self.shape("square")
+    self.penup()
+    self.setheading(0)
+    self.showturtle()
 
   def up(self):
-    pass
+    if self.heading() != 270:
+      self.setheading(90)
+      turningPoints.append([self.pos(),90])
 
   def down(self):
-    pass
+    if self.heading() != 90:
+      self.setheading(270)
+      turningPoints.append([self.pos(),270])
+
 
   def left(self):
-    pass
+    if self.heading() != 0:
+      self.setheading(180)
+      turningPoints.append([self.pos(),180])
+
 
   def right(self):
-    pass
-
-  def move(self):
-    pass
-    
-  def die(self):
-    pass
+    if self.heading() != 180:
+      self.setheading(0)
+      turningPoints.append([self.pos(),0])
 
 
 class Segment(Turtle):
-  def __init__(self, other):
+  def __init__(self, head):
     super().__init__()
-    pass
+    self.head = head
+    self.ht()
+    self.speed(0)
+    self.color("#00FF00")
+    self.shape("square")
+    self.penup()
+    self.setheading(head.heading())
+    self.showturtle()
+    if head.heading() == 0:
+      self.goto(head.pos() - [15*(len(head.body)+1),0])
+    elif head.heading() == 90:
+      self.goto(head.pos() - [0,-15*(len(head.body)+1)])
+    elif head.heading() == 180:
+      self.goto(head.pos() - [-15*(len(head.body)+1),0])
+    if head.heading() == 270:
+      self.goto(head.pos() - [0,15*(len(head.body)+1)])
 
   def move(self, other):
     pass
@@ -52,19 +79,46 @@ class Segment(Turtle):
 class Apple(Turtle):
   def __init__(self):
     super().__init__()
-    pass
+    self.ht()
+    self.speed(0)
+    self.shape("circle")
+    self.penup()
+    self.color("#FF0000")
+    self.goto(150,0)
+    self.showturtle()
 
   def relocate(self):
-    pass
+    self.goto(random.randint(-200,200),random.randint(-200,200))
 
 screen = Screen()
 screen.bgcolor("black")
-screen.setup(520,520)
+screen.setup(700,700)
+playing_area()
+body = []
+turningPoints = []
+alive = True
+head = Head(screen,body)
+apple = Apple()
+onkeypress(head.up,'Up')
+onkeypress(head.down,'Down')
+onkeypress(head.left,'Left')
+onkeypress(head.right,'Right')
 # Key Binding. Connects key presses and mouse clicks with function calls
 screen.listen()
 
-body = []
-
+while alive == True:
+  head.forward(5)
+  for i in range(len(body)):
+    body[i].forward(5)
+    for i2 in range(len(turningPoints)):
+      if body[i].pos() == turningPoints[i2][0]:
+        body[i].setheading(turningPoints[i2][1])
+  if head.xcor() <= -240 or head.xcor() >= 240 or head.ycor() <= -240 or head.ycor() >= 240:
+    alive = False
+  if head.xcor() <= apple.xcor() + 10 and head.xcor() >= apple.xcor() - 10 and head.ycor() <= apple.ycor() + 10 and head.ycor() >= apple.ycor() - 10:
+    apple.relocate()
+    body.append(Segment(head))
+head.ht()
 
 screen.exitonclick()
 
