@@ -1,5 +1,6 @@
 from turtle import *
 import random
+import time
 
 def generate_color():
     return f"#{random.randint(0, 0xFFFFFF):06x}"
@@ -67,11 +68,11 @@ class Segment(Turtle):
     if head.heading() == 0:
       self.goto(head.pos() - [15*(len(head.body)+1),0])
     elif head.heading() == 90:
-      self.goto(head.pos() - [0,-15*(len(head.body)+1)])
+      self.goto(head.pos() - [0,15*(len(head.body)+1)])
     elif head.heading() == 180:
       self.goto(head.pos() - [-15*(len(head.body)+1),0])
     if head.heading() == 270:
-      self.goto(head.pos() - [0,15*(len(head.body)+1)])
+      self.goto(head.pos() - [0,-15*(len(head.body)+1)])
 
   def move(self, other):
     pass
@@ -107,9 +108,9 @@ onkeypress(head.right,'Right')
 screen.listen()
 
 while alive == True:
-  head.forward(5)
+  head.forward(1)
   for i in range(len(body)):
-    body[i].forward(5)
+    body[i].forward(1)
     for i2 in range(len(turningPoints)):
       if body[i].pos() == turningPoints[i2][0]:
         body[i].setheading(turningPoints[i2][1])
@@ -118,13 +119,12 @@ while alive == True:
   if head.xcor() <= apple.xcor() + 10 and head.xcor() >= apple.xcor() - 10 and head.ycor() <= apple.ycor() + 10 and head.ycor() >= apple.ycor() - 10:
     apple.relocate()
     body.append(Segment(head))
+  for part in body:
+    if head.xcor() <= part.xcor() + 7 and head.xcor() >= part.xcor() - 7 and head.ycor() <= part.ycor() + 7 and head.ycor() >= part.ycor() - 7:
+      alive = False
+for i in range(len(body)):
+  body[i].ht()
+  time.sleep(0.5)
 head.ht()
-
-screen.exitonclick()
-
-
-
-
-
 
 screen.exitonclick()
